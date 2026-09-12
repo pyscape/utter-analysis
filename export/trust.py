@@ -64,7 +64,7 @@ def load(path, split):
                     survived=bool(r["survived"]), gap=r["gap"], conf0=r.get("conf0"), energy=r.get("energy"),
                     entropy=r.get("entropy"), entropy_delta=r.get("entropy_delta"), lead_delta0=r.get("lead_delta0"),
                     lead_delta1=r.get("lead_delta1"), displaced_delta=r.get("displaced_delta"),
-                    had_history=bool(r.get("had_history")), age_ms=r.get("age_ms"), advances_alive=r.get("advances_alive"),
+                    had_history=bool(r.get("had_history")), advances_alive=r.get("advances_alive"),
                     churn=r.get("churn"), vanished=bool(r.get("vanished")), sighting_ms=r["sighting_ms"],
                     end_ms=r["end_ms"], n_advances=r["n_advances"], advance_ms=json.dumps(r["advance_ms"]),
                 )
@@ -75,8 +75,8 @@ def load(path, split):
                     advances.append(
                         dict(
                             split=split, clip_id=clip, adv=i, ms=adv["ms"], rank=rank, text=a["text"],
-                            relation=relation(words_of(a["text"]), top), conf=a["conf"], lead=a.get("lead"),
-                            lead_delta=a.get("lead_delta"), age_ms=a.get("age_ms"), gap=adv.get("gap"),
+                            relation=a.get("relation") or relation(words_of(a["text"]), top), conf=a["conf"],
+                            lead=a.get("lead"), lead_delta=a.get("lead_delta"), gap=adv.get("gap"),
                             entropy=adv.get("entropy"),
                         )
                     )
@@ -107,6 +107,13 @@ def main():
         dst = out / "raw" / Path(path).name
         shutil.copy2(path, dst)
         sources.append(dict(split=split, file=dst.name, sha256=sha256(path), bytes=Path(path).stat().st_size, clips=len(c)))
+        diag = Path(path + ".diag.json")
+        if diag.exists():
+            shutil.copy2(diag, out / "raw" / diag.name)
+            prov = json.loads(diag.read_text()).get("provenance") or {}
+            sources[-1]["decoded_by"] = dict(
+                wheel=prov.get("wheel_path"), revision=prov.get("wheel_revision"), run=prov.get("date")
+            )
     for rep in a.report:
         shutil.copy2(rep, out / "raw" / Path(rep).name)
 

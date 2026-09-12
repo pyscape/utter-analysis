@@ -62,11 +62,11 @@ def load(path):
             for i, a in enumerate(r["advances"]):
                 confs = [rd[1] for rd in a["readings"]]
                 top = a["readings"][0][0] if a["readings"] else None
-                for rank, (text, conf, delta, age, rel) in enumerate(a["readings"]):
+                for rank, (text, conf, delta, rel) in enumerate(a["readings"]):
                     others = [c for j, c in enumerate(confs) if j != rank]
                     T["advances"].append(dict(key=key, split=split, adv=i, fed=a["fed"], ms=a["fed"] / SAMPLES_PER_MS, seg=a["seg"],
                                               grew=bool(a["grew"]), sil_span_ms=a["sil_span"], top=top, rank=rank, text=text, conf=conf,
-                                              lead=(conf - max(others)) if others else None, lead_delta=delta, age_ms=age, relation=rel))
+                                              lead=(conf - max(others)) if others else None, lead_delta=delta, relation=rel))
     return {k: pd.DataFrame(v) for k, v in T.items()}
 
 
