@@ -55,7 +55,9 @@ def load(path, split):
     with open(path) as f:
         for line in f:
             r = json.loads(line)
-            clip = r["clip"].split("/")[-1].removesuffix(".wav")
+            parts = r["clip"].split("/")
+            # Speech Commands reuses a basename across word folders, so the folder is part of the id.
+            clip = parts[-2] + "/" + parts[-1].removesuffix(".wav")
             clips.append(
                 dict(
                     split=split, clip_id=clip, label=r["clip"].split("/")[-2], word=r["word"], top_word=r["top_word"],
@@ -109,6 +111,8 @@ def main():
         shutil.copy2(rep, out / "raw" / Path(rep).name)
 
     cdf = pd.DataFrame(clips)
+    dup = cdf.duplicated(["split", "clip_id"]).sum()
+    assert dup == 0, f"{dup} clip ids repeat within a split"
     adf = pd.DataFrame(advances)
     cdf.to_parquet(out / "clips.parquet", index=False)
     adf.to_parquet(out / "advances.parquet", index=False)
