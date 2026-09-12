@@ -58,7 +58,7 @@ def load(path, split):
             clip = r["clip"].split("/")[-1].removesuffix(".wav")
             clips.append(
                 dict(
-                    split=split, clip=clip, label=r["clip"].split("/")[-2], word=r["word"], top_word=r["top_word"],
+                    split=split, clip_id=clip, label=r["clip"].split("/")[-2], word=r["word"], top_word=r["top_word"],
                     survived=bool(r["survived"]), gap=r["gap"], conf0=r.get("conf0"), energy=r.get("energy"),
                     entropy=r.get("entropy"), entropy_delta=r.get("entropy_delta"), lead_delta0=r.get("lead_delta0"),
                     lead_delta1=r.get("lead_delta1"), displaced_delta=r.get("displaced_delta"),
@@ -72,7 +72,7 @@ def load(path, split):
                 for rank, a in enumerate(adv["readings"]):
                     advances.append(
                         dict(
-                            split=split, clip=clip, adv=i, ms=adv["ms"], rank=rank, text=a["text"],
+                            split=split, clip_id=clip, adv=i, ms=adv["ms"], rank=rank, text=a["text"],
                             relation=relation(words_of(a["text"]), top), conf=a["conf"], lead=a.get("lead"),
                             lead_delta=a.get("lead_delta"), age_ms=a.get("age_ms"), gap=adv.get("gap"),
                             entropy=adv.get("entropy"),
