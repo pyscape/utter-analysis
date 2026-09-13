@@ -5,7 +5,9 @@
         --wheel "how the audio was decoded" [--report FILE ...]
 
 One row per stream, word, gap, final and stable block; and in advances.parquet one row per
-stream, advance and reading, with the reading's lead derived from the confidences.
+stream, advance and reading. A reading's `relation` and `lead_delta` are the runtime's own, as
+the harness read them off the partial; the lead is derived from the confidences, which the
+partial carries and no field repeats.
 """
 
 import argparse

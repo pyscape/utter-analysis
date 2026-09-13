@@ -4,8 +4,10 @@
     python export/trust.py --testing RUN.clips.jsonl [--validation RUN.validation.clips.jsonl]
         --out data/DATE-trust --wheel "how the audio was decoded" [--report FILE ...]
 
-clips.parquet: one row per clip. advances.parquet: one row per clip, advance and reading, with
-the reading's relation to rank 0 (same, prefix, extends, differs) computed from the texts.
+clips.parquet: one row per clip. advances.parquet: one row per clip, advance and reading. A
+reading's `relation` and `lead_delta` are the runtime's own, as the harness read them off the
+partial; the relation is recomputed from the texts only for a run recorded before the runtime
+carried the fields.
 """
 
 import argparse
